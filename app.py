@@ -6,10 +6,25 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 
+# ------------------------------
+# Ensure required NLTK resources are available
+# ------------------------------
+try:
+    nltk.data.find("tokenizers/punkt")
+except LookupError:
+    nltk.download("punkt")
+
+try:
+    nltk.data.find("corpora/stopwords")
+except LookupError:
+    nltk.download("stopwords")
+
 # Initialize Stemmer
 ps = PorterStemmer()
 
+# ------------------------------
 # Function to preprocess text
+# ------------------------------
 def text_transform(text):
     text = text.lower()
     text = word_tokenize(text)
@@ -32,25 +47,24 @@ def text_transform(text):
     for i in text:
         y.append(ps.stem(i))  # Apply stemming
 
-    text = y[:]
     return " ".join(y)
 
+# ------------------------------
 # Load the model and vectorizer
+# ------------------------------
 tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
 model = pickle.load(open('model.pkl', 'rb'))
 
+# ------------------------------
 # Streamlit UI
+# ------------------------------
 st.title("Email/SMS Classifier")
 input_sms = st.text_area("Enter the message")
 
-if st.button("Predict"):  # Only process if user inputs something
+if st.button("Predict") and input_sms.strip():  # Only process if user inputs something
     transformed_sms = text_transform(input_sms)
-    vector_input = tfidf.transform([transformed_sms])  # Correct method name
+    vector_input = tfidf.transform([transformed_sms])
     result = model.predict(vector_input)[0]
 
     # Output result
-    if result == 1:
-        st.header("Spam")
-    else:
-        st.header("Ham")
-
+    st.header("Spam" if result == 1 else "Ham")
