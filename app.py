@@ -6,19 +6,6 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 
-# ------------------------------
-# Ensure required NLTK resources are available
-# ------------------------------
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt")
-
-try:
-    nltk.data.find("corpora/stopwords")
-except LookupError:
-    nltk.download("stopwords")
-
 # Initialize Stemmer
 ps = PorterStemmer()
 
@@ -61,10 +48,10 @@ model = pickle.load(open('model.pkl', 'rb'))
 st.title("Email/SMS Classifier")
 input_sms = st.text_area("Enter the message")
 
-if st.button("Predict") and input_sms.strip():  # Only process if user inputs something
+if st.button("Predict") and input_sms.strip():
     transformed_sms = text_transform(input_sms)
     vector_input = tfidf.transform([transformed_sms])
     result = model.predict(vector_input)[0]
 
-    # Output result
     st.header("Spam" if result == 1 else "Ham")
+
