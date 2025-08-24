@@ -2,9 +2,25 @@ import streamlit as st
 import pickle
 import string
 import nltk
+import os
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
+
+# ------------------------------
+# Setup persistent NLTK data folder
+# ------------------------------
+nltk_data_path = os.environ.get("NLTK_DATA", "/opt/render/project/src/nltk_data")
+if not os.path.exists(nltk_data_path):
+    os.makedirs(nltk_data_path)
+
+nltk.data.path.append(nltk_data_path)
+
+for resource in ["punkt", "stopwords"]:
+    try:
+        nltk.data.find(resource)
+    except LookupError:
+        nltk.download(resource, download_dir=nltk_data_path)
 
 # Initialize Stemmer
 ps = PorterStemmer()
@@ -16,31 +32,22 @@ def text_transform(text):
     text = text.lower()
     text = word_tokenize(text)
 
-    y = []
-    for i in text:
-        if i.isalnum():  # Keep only alphanumeric words
-            y.append(i)
+    y = [i for i in text if i.isalnum()]  # Keep only alphanumeric words
 
-    text = y[:]
-    y.clear()
+    text = [i for i in y if i not in stopwords.words('english') and i not in string.punctuation]
 
-    for i in text:
-        if i not in stopwords.words('english') and i not in string.punctuation:
-            y.append(i)
+    stemmed_text = [ps.stem(i) for i in text]  # Apply stemming
 
-    text = y[:]
-    y.clear()
-
-    for i in text:
-        y.append(ps.stem(i))  # Apply stemming
-
-    return " ".join(y)
+    return " ".join(stemmed_text)
 
 # ------------------------------
 # Load the model and vectorizer
 # ------------------------------
-tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
-model = pickle.load(open('model.pkl', 'rb'))
+with open('vectorizer.pkl', 'rb') as f:
+    tfidf = pickle.load(f)
+
+with open('model.pkl', 'rb') as f:
+    model = pickle.load(f)
 
 # ------------------------------
 # Streamlit UI
@@ -53,5 +60,5 @@ if st.button("Predict") and input_sms.strip():
     vector_input = tfidf.transform([transformed_sms])
     result = model.predict(vector_input)[0]
 
+    # Output result
     st.header("Spam" if result == 1 else "Ham")
-
