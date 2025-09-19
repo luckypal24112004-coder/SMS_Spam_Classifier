@@ -1,4 +1,5 @@
-# SMS Spam Classifier
+# 📩 SMS Spam Classifier  
+👉 [**Live Demo Here**](https://your-deployment-link.com) 👈  
 
 ## Purpose
 This project builds a machine learning model to classify SMS messages as **spam** or **ham (not spam)**. It demonstrates how text preprocessing and natural language processing techniques can be used to detect spam messages automatically, which is important for improving communication efficiency and preventing fraud.
