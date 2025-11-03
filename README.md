@@ -1,6 +1,6 @@
 # 📩 SMS Spam Classifier  
 
-🌐 **Live Demo**: [Try it here](https://sms-spam-classifier-58no.onrender.com)  
+🌐 **Live Demo(may take 30 to 60 seconds due to free hosting)**: [Try it here](https://sms-spam-classifier-58no.onrender.com)  
 
 This project builds a machine learning model to classify SMS messages as **spam** or **ham (not spam)**. It demonstrates how **text preprocessing** and **natural language processing (NLP)** techniques can be used to detect spam messages automatically—helping improve communication efficiency and prevent fraud.  
 
